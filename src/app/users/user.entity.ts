@@ -1,17 +1,15 @@
 import { AddressEntity } from '@commons/entities/address';
 
 export class UserEntity {
-  public id: number;
+  public id?: string;
 
-  public name: string;
+  public name?: string;
 
-  public phone: number;
+  public phone?: string;
 
-  public email: string;
+  public email?: string;
 
-  public secret: string;
-
-  public addressId: number;
+  public secret?: string;
 
   public address?: AddressEntity;
 
@@ -28,13 +26,9 @@ export class UserEntity {
       if (keys.includes('secret'))
         this.secret = json.secret ? String(json.secret) : json.secret;
       if (keys.includes('phone'))
-        this.phone = json.phone ? Number(json.phone) : json.phone;
+        this.phone = json.phone ? String(json.phone) : json.phone;
       if (keys.includes('extra'))
         this.extra = json.extra ? Object(json.extra) : json.extra;
-      if (keys.includes('addressId'))
-        this.addressId = json.addressId
-          ? Number(json.addressId)
-          : json.addressId;
       if (keys.includes('address'))
         this.address = json.address
           ? new AddressEntity(json.address)

@@ -8,13 +8,12 @@ import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { InterceptorModule } from '@commons/interceptors/interceptor.module';
 
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '@commons/environments';
 import { AppComponent } from './app.component';
 import { AccountModule } from '../app/account/account.module';
-import { AddressModule } from '@commons/entities/address';
 import { UserModule } from '../app/users/user.module';
 
 registerLocaleData(localePt); // FIXME: set this dynamically
@@ -36,14 +35,11 @@ export const routes: Routes = [
     FormsModule,
     MatSidenavModule,
     MatNativeDateModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
-    }),
     AccountModule,
-    AddressModule,
     UserModule,
-    InterceptorModule.forRoot({ serverUrl: environment.server }),
     RouterModule.forRoot(routes),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideFirestore(() => getFirestore()),
   ],
   declarations: [AppComponent],
   providers: [],

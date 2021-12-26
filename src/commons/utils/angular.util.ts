@@ -7,10 +7,6 @@ export class AngularUtil {
   private static readonly DURATION: number = 2500;
 
   public static hasValue(control: AbstractControl): boolean {
-    // if (control) console.debug('1 - CONTROL OK');
-    // if (control.valid) console.debug('2 - CONTROL VALID');
-    // if (control.value) console.debug('3 - CONTROL VALUE');
-
     return control && control.valid && control.value;
   }
 

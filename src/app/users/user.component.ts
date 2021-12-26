@@ -14,7 +14,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { TypeUtil } from '@commons/utils';
 
-import { AddressService } from '@commons/entities/address/address.service';
 import { CpfValidator } from '@commons/validator';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
@@ -234,7 +233,6 @@ export class UserComponent implements OnInit {
 
   constructor(
     public activatedRoute: ActivatedRoute,
-    private addressService: AddressService,
     private formBuilder: FormBuilder,
     private location: Location,
     private snackBar: MatSnackBar,
@@ -268,7 +266,7 @@ export class UserComponent implements OnInit {
       number: ['', [Validators.required]],
       city: ['', Validators.required],
       state: ['', Validators.required],
-      country: ['Brasil'],
+      country: 'Brasil',
       quarter: [''],
       extra: [''],
     });
@@ -328,12 +326,13 @@ export class UserComponent implements OnInit {
       .subscribe((json: object) => {
         if (
           this.userGroup.valid &&
-          this.secretGroup.valid &&
-          TypeUtil.hasText(this.addressEntity.id)
+          this.addressGroup.valid &&
+          this.secretGroup.valid
         ) {
           this.saveUser(json);
         }
       });
+
     this.addressGroup.valueChanges
       .pipe(
         debounceTime(1000),
@@ -397,29 +396,12 @@ export class UserComponent implements OnInit {
     this.addressEntity = new AddressEntity(this.userEntity.address);
     this.configFormGroups();
   }
-  private async saveAddress(partial: any): Promise<void> {
-    const save$: Observable<any> = this.addressEntity.id
-      ? this.addressService.update(
-          this.addressEntity.id,
-          new AddressEntity(partial)
-        )
-      : this.addressService.create(new AddressEntity(partial));
-    return save$
-      .toPromise()
-      .then((address: AddressEntity) => {
-        if (TypeUtil.exists(address.id)) {
-          this.addressEntity.id = address.id;
-          this.userGroup.patchValue({ address: address });
-        }
-        return Promise.resolve();
-      })
-      .catch((error) => {
-        this.snackBar.open(error);
-      });
+  private saveAddress(partial: any): void {
+    const address: AddressEntity = new AddressEntity(partial);
+    this.userGroup.patchValue({ address: address });
   }
 
   private async saveUser(partial: any): Promise<void> {
-    console.debug(partial);
     const save$: Observable<any> = this.userEntity.id
       ? this.userService.update(this.userEntity.id, new UserEntity(partial))
       : this.userService.create(new UserEntity(partial));
@@ -456,18 +438,19 @@ export class UserComponent implements OnInit {
   }
 
   private searchByCep(code: string): void {
-    this.addressService.searchByCep(code).subscribe((json: ViaCep) => {
+    this.userService.searchByCep(code).subscribe((json: ViaCep) => {
       this.addressGroup.patchValue({
         street: json.logradouro,
         quarter: json.bairro,
         city: json.localidade,
         state: json.uf,
+        country: 'Brasil',
       });
     });
   }
 
   public get userExists() {
-    if (this.userEntity.id > 0) return true;
+    if (TypeUtil.hasText(this.userEntity.id)) return true;
     return;
   }
 }

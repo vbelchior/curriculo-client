@@ -14,8 +14,6 @@ export interface ViaCep {
 }
 
 export class AddressEntity {
-  public id: number;
-
   public code: string;
 
   public street: string;
@@ -34,7 +32,6 @@ export class AddressEntity {
 
   constructor(json?: any) {
     if (TypeUtil.exists(json)) {
-      if (TypeUtil.exists(json.id)) this.id = Number(json.id);
       if (TypeUtil.exists(json.street)) this.street = String(json.street);
       if (TypeUtil.exists(json.number)) this.number = String(json.number);
       if (TypeUtil.exists(json.extra)) this.extra = String(json.extra);

@@ -9,7 +9,7 @@ import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 
 @Injectable({ providedIn: 'root' })
-export class UsersResolver implements Resolve<UserEntity[]> {
+export class UsersResolver implements Resolve<any[]> {
   constructor(private userService: UserService) {}
 
   resolve(
@@ -17,7 +17,7 @@ export class UsersResolver implements Resolve<UserEntity[]> {
     state: RouterStateSnapshot
   ): Observable<UserEntity[]> {
     const subject: Subject<UserEntity[]> = new Subject<UserEntity[]>();
-
+    this.userService.filter().subscribe((result) => console.debug(result));
     const fetchPromise: Promise<UserEntity[]> = this.userService
       .filter()
       .toPromise();

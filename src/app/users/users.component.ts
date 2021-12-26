@@ -96,27 +96,17 @@ export class UsersComponent implements OnInit {
     this.users = [];
     this.filterName = new FormControl('');
   }
-  public fetchPage(keepIndex?: boolean) {
-    const fetchPromise: Promise<UserEntity[]> = this.userService
-      .filter()
-      .toPromise();
-    Promise.all<UserEntity[]>([fetchPromise])
-      .then(([fetch]) => {
-        this.users = fetch;
-      })
-      .catch(() => {
-        this.snackBar.open(
-          'Algo inesperado ocorreu! Verifique sua conexão.',
-          null
-        );
-      });
-  }
 
   public ngOnInit() {
-    this.users = this.activatedRoute.snapshot.data.users;
+    // this.users = this.activatedRoute.snapshot.data.users;
+    this.userService.filter().subscribe((data) => {
+      this.users = data;
+    });
+
     this.filterName.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe(() => this.fetchUsers());
+    this.filterName.disable();
   }
 
   public async fetchUsers() {
