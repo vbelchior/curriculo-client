@@ -12,17 +12,12 @@ import {
   doc,
   deleteDoc,
   docData,
+  setDoc,
 } from '@angular/fire/firestore';
 import { AddressEntity, ViaCep } from '@commons/entities/address';
 @Injectable()
 export class UserService {
-  private path: string = 'users';
-
-  private usersRef: any;
-
-  constructor(private httpClient: HttpClient, private firestore: Firestore) {
-    this.usersRef = collection(this.firestore, 'users');
-  }
+  constructor(private httpClient: HttpClient, private firestore: Firestore) {}
 
   private convertToObject(entity: UserEntity): object {
     if (Object.keys(entity.address).length > 0) {
@@ -34,13 +29,8 @@ export class UserService {
   public create(entity: UserEntity): Observable<any> {
     const usersRef = collection(this.firestore, 'users');
     const userToObject = this.convertToObject(entity);
-    const promise = addDoc(usersRef, userToObject);
-    return from(promise);
+    return from(addDoc(usersRef, userToObject));
   }
-  // public create(entity: UserEntity): Observable<UserEntity> {
-  //   const path: string = `${environment.server}/users`;
-  //   return this.httpClient.post<UserEntity>(path, entity);
-  // }
 
   public retrieve(id: string): Observable<UserEntity> {
     if (!TypeUtil.exists(id)) return of(new UserEntity());
@@ -48,17 +38,17 @@ export class UserService {
     return docData(userRef, { idField: 'id' }) as Observable<UserEntity>;
   }
 
-  public update(id: string, entity: UserEntity): Observable<Object> {
-    const path: string = `${environment.server}/users/${id}`;
-    let query: HttpParams = new HttpParams();
-    return this.httpClient.patch(path, entity, { params: query });
+  public update(id: string, entity: UserEntity): Observable<any> {
+    const bookDocRef = doc(this.firestore, `users/${id}`);
+    const userToObject = this.convertToObject(entity);
+    return from(setDoc(bookDocRef, userToObject));
   }
 
   public replace(id: string, entity: UserEntity): Observable<Object> {
     const path: string = `${environment.server}/users/${id}`;
     let query: HttpParams = new HttpParams();
     return this.httpClient.put(path, entity, { params: query });
-  }
+  } //
 
   public delete(id: string): Observable<any> {
     if (!TypeUtil.exists(id)) return throwError(new UserEntity());
@@ -77,13 +67,6 @@ export class UserService {
     >;
   }
 
-  public count(nameLike?: string, titleLike?: string): Observable<number> {
-    const path: string = `${environment.server}/users/count/value`;
-    let query: HttpParams = new HttpParams();
-    if (TypeUtil.hasText(nameLike)) query = query.set('nameLike', nameLike);
-    if (TypeUtil.hasText(titleLike)) query = query.set('titleLike', titleLike);
-    return this.httpClient.get<number>(path, { params: query });
-  }
   public searchByCep(code: string): Observable<ViaCep> {
     if (code.length != 8) return;
     const path: string = `https://viacep.com.br/ws/${code}/json`;

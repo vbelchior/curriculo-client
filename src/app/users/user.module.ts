@@ -39,6 +39,9 @@ export const routes: Routes = [
   {
     path: 'users',
     component: UsersComponent,
+    resolve: {
+      users: UsersResolver,
+    },
   },
   {
     path: 'users/:id',

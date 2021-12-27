@@ -98,11 +98,7 @@ export class UsersComponent implements OnInit {
   }
 
   public ngOnInit() {
-    // this.users = this.activatedRoute.snapshot.data.users;
-    this.userService.filter().subscribe((data) => {
-      this.users = data;
-    });
-
+    this.users = this.activatedRoute.snapshot.data.users;
     this.filterName.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe(() => this.fetchUsers());

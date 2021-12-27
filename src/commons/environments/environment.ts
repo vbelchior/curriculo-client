@@ -11,4 +11,8 @@ export const environment = {
     measurementId: 'G-99KF7DPT8Q',
   },
   server: {},
+  auth: {
+    apiBaseUrl: 'https://identitytoolkit.googleapis.com',
+    key: 'AIzaSyAa8PzXu7iXq2HX3ziv6l3Xn4hhgornBAU',
+  },
 };

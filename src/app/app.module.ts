@@ -8,9 +8,13 @@ import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-
+import { SETTINGS as AUTH_SETTINGS } from '@angular/fire/compat/auth';
+import { USE_DEVICE_LANGUAGE } from '@angular/fire/compat/auth';
+import { PERSISTENCE } from '@angular/fire/compat/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+
 import { environment } from '@commons/environments';
 import { AppComponent } from './app.component';
 import { AccountModule } from '../app/account/account.module';
@@ -21,7 +25,7 @@ registerLocaleData(localePt); // FIXME: set this dynamically
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'users',
+    redirectTo: 'login',
     pathMatch: 'full',
   },
 ];
@@ -42,7 +46,14 @@ export const routes: Routes = [
     provideFirestore(() => getFirestore()),
   ],
   declarations: [AppComponent],
-  providers: [],
+  providers: [
+    {
+      provide: AUTH_SETTINGS,
+      useValue: { appVerificationDisabledForTesting: true },
+    },
+    { provide: USE_DEVICE_LANGUAGE, useValue: true },
+    { provide: PERSISTENCE, useValue: 'session' },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

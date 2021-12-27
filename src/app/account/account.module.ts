@@ -25,12 +25,23 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AccountService } from './account.service';
+import { AuthService } from './auth.service';
+import { LoginComponent } from './login.component';
+import { SignupComponent } from './signup.component';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
+    path: 'signup',
+    component: SignupComponent,
+  },
+];
 
 @NgModule({
-  declarations: [],
+  declarations: [LoginComponent, SignupComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -59,7 +70,7 @@ export const routes: Routes = [];
     ReactiveFormsModule,
     RouterModule.forChild(routes),
   ],
-  providers: [AccountService],
+  providers: [AuthService],
   exports: [],
 })
 export class AccountModule {}

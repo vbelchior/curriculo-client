@@ -266,7 +266,7 @@ export class UserComponent implements OnInit {
       number: ['', [Validators.required]],
       city: ['', Validators.required],
       state: ['', Validators.required],
-      country: 'Brasil',
+      country: '',
       quarter: [''],
       extra: [''],
     });
@@ -327,7 +327,7 @@ export class UserComponent implements OnInit {
         if (
           this.userGroup.valid &&
           this.addressGroup.valid &&
-          this.secretGroup.valid
+          this.secretIsValid
         ) {
           this.saveUser(json);
         }
@@ -386,8 +386,7 @@ export class UserComponent implements OnInit {
       });
 
     if (TypeUtil.hasText(this.userEntity.secret)) {
-      this.secretGroup.get('secretConfirmation').disable();
-      this.secretGroup.get('secret').disable();
+      this.secretGroup.disable();
     }
   }
 
@@ -402,21 +401,21 @@ export class UserComponent implements OnInit {
   }
 
   private async saveUser(partial: any): Promise<void> {
-    const save$: Observable<any> = this.userEntity.id
+    const save$: Observable<any> = TypeUtil.hasText(this.userEntity.id)
       ? this.userService.update(this.userEntity.id, new UserEntity(partial))
       : this.userService.create(new UserEntity(partial));
     return save$
       .toPromise()
-      .then((user: UserEntity) => {
-        if (TypeUtil.exists(user.id)) {
-          this.userEntity.id = user.id;
+      .then((response: object) => {
+        if (TypeUtil.exists(response) && TypeUtil.exists(response['id'])) {
+          this.userEntity.id = response['id'];
         }
         this.snackBar.open('Usuário Salvo', null);
 
         return Promise.resolve();
       })
       .catch((error) => {
-        this.snackBar.open(error.error.message, null);
+        this.snackBar.open(error, null);
       });
   }
 
@@ -452,5 +451,10 @@ export class UserComponent implements OnInit {
   public get userExists() {
     if (TypeUtil.hasText(this.userEntity.id)) return true;
     return;
+  }
+
+  public get secretIsValid() {
+    if (this.secretGroup.disabled || this.secretGroup.valid) return true;
+    return false;
   }
 }

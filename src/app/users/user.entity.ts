@@ -3,22 +3,24 @@ import { AddressEntity } from '@commons/entities/address';
 export class UserEntity {
   public id?: string;
 
-  public name?: string;
+  public name: string;
 
   public phone?: string;
 
-  public email?: string;
+  public email: string;
 
-  public secret?: string;
+  public secret: string;
 
   public address?: AddressEntity;
 
-  public extra: object;
+  public extra?: object;
+
+  public emailVerified?: boolean;
 
   constructor(json?: any) {
     if (json != undefined && json != null) {
       const keys: Array<string> = Object.keys(json);
-      if (keys.includes('id')) this.id = json.id ? Number(json.id) : json.id;
+      if (keys.includes('id')) this.id = json.id ? String(json.id) : json.id;
       if (keys.includes('name'))
         this.name = json.name ? String(json.name) : json.name;
       if (keys.includes('email'))
@@ -33,6 +35,11 @@ export class UserEntity {
         this.address = json.address
           ? new AddressEntity(json.address)
           : json.address;
+
+      if (keys.includes('emailVerified'))
+        this.emailVerified = json.emailVerified
+          ? Object(json.emailVerified)
+          : json.emailVerified;
     }
   }
 }
