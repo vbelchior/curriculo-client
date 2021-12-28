@@ -117,9 +117,7 @@ export class SignupComponent {
           password: this.formGroup.get('secret').value,
           returnSecureToken: true,
         })
-        .subscribe((response) => {
-          this.router.navigate(['login']);
-        });
+        .subscribe((response) => {});
     }
   }
 }

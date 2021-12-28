@@ -15,12 +15,13 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
+import { AuthInterceptor } from '@commons/interceptors/auth.interceptor';
 import { environment } from '@commons/environments';
 import { AppComponent } from './app.component';
 import { AccountModule } from '../app/account/account.module';
 import { UserModule } from '../app/users/user.module';
-
-registerLocaleData(localePt); // FIXME: set this dynamically
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthService } from './account/auth.service';
 
 export const routes: Routes = [
   {
@@ -41,18 +42,19 @@ export const routes: Routes = [
     MatNativeDateModule,
     AccountModule,
     UserModule,
+    HttpClientModule,
     RouterModule.forRoot(routes),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
   ],
   declarations: [AppComponent],
   providers: [
     {
-      provide: AUTH_SETTINGS,
-      useValue: { appVerificationDisabledForTesting: true },
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
     },
-    { provide: USE_DEVICE_LANGUAGE, useValue: true },
-    { provide: PERSISTENCE, useValue: 'session' },
   ],
   bootstrap: [AppComponent],
 })

@@ -7,11 +7,14 @@ import {
   signInWithEmailAndPassword,
   getAuth,
   signOut,
+  Auth,
 } from 'firebase/auth';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
   public path: string = environment.auth.apiBaseUrl;
   public key: string = environment.auth.key;
@@ -29,6 +32,10 @@ export class AuthService {
       );
   }
 
+  public login2(email: string, password: string) {
+    return from(signInWithEmailAndPassword(null, email, password));
+  }
+
   public signup(body: any) {
     return this.http.post(
       `${this.path}/v1/accounts:signUp?key=${this.key}`,
@@ -39,5 +46,13 @@ export class AuthService {
   private authSuccess(token: string, userId: string) {
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('userId', userId);
+  }
+
+  public getToken(): string | null {
+    return sessionStorage.getItem('token');
+  }
+
+  public getUserId() {
+    return sessionStorage.getItem('userId');
   }
 }

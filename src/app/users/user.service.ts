@@ -15,7 +15,9 @@ import {
   setDoc,
 } from '@angular/fire/firestore';
 import { AddressEntity, ViaCep } from '@commons/entities/address';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class UserService {
   constructor(private httpClient: HttpClient, private firestore: Firestore) {}
 

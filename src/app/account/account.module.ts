@@ -70,7 +70,6 @@ export const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes),
   ],
-  providers: [AuthService],
-  exports: [],
+  providers: [],
 })
 export class AccountModule {}

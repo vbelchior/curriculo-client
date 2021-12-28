@@ -39,7 +39,7 @@ import { AuthService } from './auth.service';
           </div>
         </mat-card-content>
         <mat-card-actions fxLayout="row" fxLayoutAlign="space-between">
-          <button mat-button>Registrar</button>
+          <button mat-button (click)="onSignUp()">Registrar</button>
           <!-- <button mat-button color="accent" >Esqueci a senha</button> -->
           <button mat-button color="primary" (click)="onLogin()">
             <span>Login</span>
@@ -96,13 +96,16 @@ export class LoginComponent implements OnInit {
 
   public onLogin(): void {
     this.authService
-      .login({
-        email: this.formGroup.get('email').value,
-        password: this.formGroup.get('secret').value,
-        returnSecureToken: true,
-      })
+      .login2(
+        this.formGroup.get('email').value,
+        this.formGroup.get('secret').value
+      )
       .subscribe((result) => {
         this.router.navigate(['users']);
       });
+  }
+
+  public onSignUp(): void {
+    this.router.navigate(['signup']);
   }
 }
