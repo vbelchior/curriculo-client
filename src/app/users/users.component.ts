@@ -24,13 +24,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             fxLayoutAlign="space-between baseline"
             fxLayoutGap="16px"
           >
-            <mat-form-field appearance="outline" class="small">
-              <input
-                matInput
-                placeholder="Filtrar pelo nome"
-                [formControl]="filterName"
-              />
-            </mat-form-field>
             <button
               mat-stroked-button
               color="primary"
@@ -83,8 +76,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class UsersComponent implements OnInit {
   public users: UserEntity[];
 
-  public filterName: FormControl;
-
   constructor(
     public activatedRoute: ActivatedRoute,
     private httpClient: HttpClient,
@@ -94,20 +85,14 @@ export class UsersComponent implements OnInit {
     private userService: UserService
   ) {
     this.users = [];
-    this.filterName = new FormControl('');
   }
 
   public ngOnInit() {
     this.users = this.activatedRoute.snapshot.data.users;
-    this.filterName.valueChanges
-      .pipe(debounceTime(1000), distinctUntilChanged())
-      .subscribe(() => this.fetchUsers());
-    this.filterName.disable();
   }
 
   public async fetchUsers() {
-    const nameLike: string = this.filterName.value;
-    this.users = await this.userService.filter(nameLike).toPromise();
+    this.users = await this.userService.filter().toPromise();
   }
 
   public onBackRoute() {
